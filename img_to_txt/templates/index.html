@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to Text</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <style>
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .icon-container i {
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        .drop-zone {
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            padding: 30px;
+            text-align: center;
+            font-size: 16px;
+            color: #999;
+            margin-top: 20px;
+        }
+        .drop-zone.dragover {
+            background-color: #e8f0fe;
+        }
+        .custom-file-upload {
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            color: #007bff;
+            background-color: #e8f0fe;
+        }
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 16px;
+        }
+        footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Image to Text</h1>
+        <div class="icon-container">
+            <i class="fas fa-upload"></i>
+            <i class="fas fa-camera"></i>
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="drop-zone" id="drop-zone">
+            Drag & Drop an Image or <label for="file" class="custom-file-upload">Browse</label>
+        </div>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <input type="file" class="form-control-file" id="file" name="file" accept="image/*" style="display: none;">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        {% if text %}
+        <h2 class="mt-5">Extracted Text:</h2>
+        <pre class="bg-light p-3" id="extracted-text">{{ text }}</pre>
+        <button class="btn btn-secondary" onclick="copyText()">Copy Text</button>
+        {% endif %}
+    </div>
+    <footer>
+        Made with ❤️ by <a href="https://www.facebook.com/0shohan0" target="_blank">Shohan</a>
+    </footer>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files;
+            }
+        });
+
+        function copyText() {
+            const text = document.getElementById('extracted-text').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Text copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
